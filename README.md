@@ -1,2 +1,4 @@
 # IsItMatchDay
 In Newcastle, when it is match day the traffic is jammed and the streets are packed. I try to avoid this when I can and since I don't follow football, I have made this website to quickly show me if it is match day or not before I journey into the toon.
+
+The site is hosted through vercel at [IsItMatch.Day](https://isitmatch.day)
