@@ -63,7 +63,7 @@
                 if (todayMatch) {
                     displayMatchDay(todayMatch);
                 } else {
-                    displayNotMatchDay();
+                    displayNotMatchDay(data.events[0]);
                 }
 
             } 
@@ -96,9 +96,15 @@
             matchDiv.innerHTML=`${newcastle} vs ${opponent}<br>Playing ${venue} at ${matchTime}`;
         }
 
-        function displayNotMatchDay() {
+        function displayNotMatchDay(nextMatch) {
             const resultDiv = document.getElementById('result');
+            const matchDiv = document.getElementById('match');
+
+            const date = new Date(nextMatch.dateEvent);
+            const options = {weekday: "long", year: "numeric", month: "long", day: "numeric"};
+            
             resultDiv.innerHTML = 'NO'
+            matchDiv.innerHTML = `Next Match: ${date.toLocaleDateString('en-GB', options)}`;
         }
 
         // Check on page load
