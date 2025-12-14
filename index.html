@@ -80,7 +80,24 @@
         function displayMatchDay(match) {
             const resultDiv = document.getElementById('result');
             const matchDiv = document.getElementById('match');
-            
+
+            resultDiv.innerHTML='YES';
+            matchDiv.innerHTML= getMatchInfoString(match);
+        }
+
+        function displayNotMatchDay(nextMatch) {
+            const resultDiv = document.getElementById('result');
+            const matchDiv = document.getElementById('match');
+
+            const date = new Date(nextMatch.dateEvent);
+            const options = {weekday: "long", year: "numeric", month: "long", day: "numeric"};
+            const matchInfo = getMatchInfoString(nextMatch);
+
+            resultDiv.innerHTML = 'NO'
+            matchDiv.innerHTML = `Next Match: ${date.toLocaleDateString('en-GB', options)}<br>${matchInfo}`;
+        }
+
+        function getMatchInfoString(match) {
             // Determine if home or away
             const isHome = match.idHomeTeam === NEWCASTLE_TEAM_ID;
             const newcastle = isHome? match.strHomeTeam : match.strAwayTeam;
@@ -101,19 +118,7 @@
                 matchTime = date.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
             }
 
-            resultDiv.innerHTML='YES';
-            matchDiv.innerHTML=`${newcastle} vs ${opponent}<br>Playing ${venue} at ${matchTime}`;
-        }
-
-        function displayNotMatchDay(nextMatch) {
-            const resultDiv = document.getElementById('result');
-            const matchDiv = document.getElementById('match');
-
-            const date = new Date(nextMatch.dateEvent);
-            const options = {weekday: "long", year: "numeric", month: "long", day: "numeric"};
-            
-            resultDiv.innerHTML = 'NO'
-            matchDiv.innerHTML = `Next Match: ${date.toLocaleDateString('en-GB', options)}`;
+            return `${newcastle} vs ${opponent}<br>Playing ${venue} at ${matchTime}`;
         }
 
         // Check on page load
