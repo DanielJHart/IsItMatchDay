@@ -35,9 +35,9 @@ async function checkMatchDay()
         const todayMatch = data.events.find(event => event.dateEvent === todayStr);
 
         if (todayMatch) {
-            displayMatchDay(todayMatch);
+            displayMatchDay(todayMatch, homeTeamID);
         } else {
-            displayNotMatchDay(data.events[0]);
+            displayNotMatchDay(data.events[0], homeTeamID);
         }
 
     } 
@@ -46,21 +46,21 @@ async function checkMatchDay()
     }
 }
 
-function displayMatchDay(match) {
+function displayMatchDay(match, homeTeamID) {
     const resultDiv = document.getElementById('result');
     const matchDiv = document.getElementById('match');
 
     resultDiv.innerHTML='YES';
-    matchDiv.innerHTML= getMatchInfoString(match);
+    matchDiv.innerHTML= getMatchInfoString(match, homeTeamID);
 }
 
-function displayNotMatchDay(nextMatch) {
+function displayNotMatchDay(nextMatch, homeTeamID) {
     const resultDiv = document.getElementById('result');
     const matchDiv = document.getElementById('match');
 
     const date = new Date(nextMatch.dateEvent);
     const options = {weekday: "long", year: "numeric", month: "long", day: "numeric"};
-    const matchInfo = getMatchInfoString(nextMatch);
+    const matchInfo = getMatchInfoString(nextMatch, homeTeamID);
 
     resultDiv.innerHTML = 'NO'
     matchDiv.innerHTML = `Next Match: ${date.toLocaleDateString('en-GB', options)}<br>${matchInfo}`;
@@ -69,12 +69,12 @@ function displayNotMatchDay(nextMatch) {
 function getMatchInfoString(match, homeTeamID) {
     // Determine if home or away
     const isHome = match.idHomeTeam === homeTeamID;
-    const homeTeam = isHome? match.strHomeTeam : match.strAwayTeam;
-    var opponent = isHome ? match.strAwayTeam : match.strHomeTeam;
-    const venue = isHome ? 'At Home' : 'Away';
+    const homeTeamStr = isHome? match.strHomeTeam : match.strAwayTeam;
+    var opponentStr = isHome ? match.strAwayTeam : match.strHomeTeam;
+    const venueStr = isHome ? 'At Home' : 'Away';
     
-    if (opponent.match(/Sunderland/gi)) {
-        opponent = "<span class=\"sunderland\">" + opponent + "</span>";
+    if (opponentStr.match(/Sunderland/gi)) {
+        opponentStr = "<span class=\"sunderland\">" + opponentStr + "</span>";
     }
     
     // Format time (strTime is in HH:MM:SS format)
@@ -87,7 +87,7 @@ function getMatchInfoString(match, homeTeamID) {
         matchTime = date.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
     }
 
-    return `${homeTeam} vs ${opponent}<br>Playing ${venue} at ${matchTime}`;
+    return `${homeTeamStr} vs ${opponentStr}<br>Playing ${venueStr} at ${matchTime}`;
 }
 
 // Check on page load
