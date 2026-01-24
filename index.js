@@ -81,7 +81,8 @@ function getMatchInfoString(match, homeTeamID) {
     var opponentStr = isHome ? match.strAwayTeam : match.strHomeTeam;
     const venueStr = isHome ? 'At Home' : 'Away';
     
-    if (opponentStr.match(/Sunderland/gi)) {
+    if (opponentStr.match(/Sunderland/gi) 
+        && homeTeamID === NEWCASTLE_TEAM_ID) {
         opponentStr = "<span class=\"sunderland\">" + opponentStr + "</span>";
     }
     
