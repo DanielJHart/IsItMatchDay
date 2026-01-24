@@ -4,38 +4,51 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Is It Match Day?</title>
-    <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            display: flex;
-            padding: 20px;
-            align-items: center;
-            justify-content: center;
-            background: rgb(43, 43, 43);
-        }
-
-        h1 {
-            font-size: 10rem;
-            color: white;
-            text-align: center;
-        }
-        h2 {
-            font-size: 2rem;
-            color: white;
-            text-align: center;
-        }
-
-        .sunderland {
-            color: #eb172b;
-        }
-    </style>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="container">
+    <!-- Search Icon (always visible) -->
+    <div class="search-container">
+        <div class="search-icon" id="searchIcon">
+            🔍
+        </div>
+    </div>
+
+    <!-- Overlay (appears when search is open) -->
+    <div class="overlay" id="overlay"></div>
+
+    <!-- Search Panel (slides in from right) -->
+    <div class="search-panel" id="searchPanel">
+        <div class="search-panel-header">
+            <h2>Search Teams</h2>
+            <button class="close-btn" id="closeBtn">&times;</button>
+        </div>
+
+        <div class="search-input-wrapper">
+            <input 
+                type="text" 
+                id="searchInput" 
+                class="search-input" 
+                placeholder="Type to search..."
+                autocomplete="off"
+            >
+        </div>
+
+        <div class="search-results" id="searchResults">
+            <div class="no-results">
+                Start typing to search for teams
+            </div>
+        </div>
+    </div>
+
+    <div class="main-content">
         <h1 id="result"></h1>
         <h2 id="match"></h2>
     </div>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.8.0/sql-wasm.js"></script>
     <script src="index.js"></script>
+    <script src="searchControl.js"></script>
     <script src='https://storage.ko-fi.com/cdn/scripts/overlay-widget.js'></script>
     <script>
     kofiWidgetOverlay.draw('danielhartuk', {
