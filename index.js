@@ -1,5 +1,11 @@
 const NEWCASTLE_TEAM_ID = '134777';
 var homeTeamID = NEWCASTLE_TEAM_ID; 
+
+var cookieTeamID = getCookie('LastTeamID');
+if (cookieTeamID) {
+    homeTeamID = cookieTeamID;
+}
+
 const urlParams = new URLSearchParams(window.location.search);
 
 if (urlParams.has('id')) {
@@ -22,6 +28,8 @@ async function checkMatchDay()
 
         const data = await response.json();
 
+        document.cookie = "LastTeamID=" + homeTeamID;
+        
         if (!data.events || data.events.length === 0) {
             displayNotMatchDay();
             return;
@@ -90,90 +98,15 @@ function getMatchInfoString(match, homeTeamID) {
     return `${homeTeamStr} vs ${opponentStr}<br>Playing ${venueStr} at ${matchTime}`;
 }
 
-let db;
-
-async function loadDatabase() {
-    try {
-        const SQL = await initSqlJs({
-            locateFile: file => `https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.8.0/${file}`
-        });
-
-        const response = await fetch('IsItMatchDayDB.db');
-        const buffer = await response.arrayBuffer();
-        db = new SQL.Database(new Uint8Array(buffer));
-        
-        console.log('✅ Database loaded!');
-        displayAllTeams();
-        
-    } catch (error) {
-        console.error('❌ Error loading database:', error);
+function getCookie(name) {
+    const cookies = document.cookie.split(';');
+    for (let i = 0; i < cookies.length; i++) {
+        const cookie = cookies[i].trim();
+        if (cookie.startsWith(name + '=')) {
+            return cookie.substring(name.length + 1);
+        }
     }
-}
-
-function displayAllTeams() {
-    const results = db.exec('SELECT * FROM FootballTeams;');
-    console.log(results);
-}
-
-loadDatabase();
-
-const searchInput = document.getElementById('searchInput');
-const resultsContainer = document.getElementById('searchResults');
-
-let searchTimeout;
-
-// Search as user types
-searchInput.addEventListener('input', function() {
-    const query = this.value.trim();
-    
-    // Clear previous timeout
-    clearTimeout(searchTimeout);
-    
-    // Clear results if input is empty
-    if (query.length === 0) {
-        resultsContainer.innerHTML = '';
-        return;
-    }
-
-    // Show loading state
-    if (query.length >= 2) {
-
-        // Debounce - wait 300ms after user stops typing
-        searchTimeout = setTimeout(() => {
-            searchTeams(query);
-        }, 300);
-    }
-});
-
-function searchTeams(query) {
-    const searchResult = db.exec(`SELECT * FROM FootballTeams WHERE TeamName LIKE ` + `'%${query.replace(/'/g, "''")}%' LIMIT 10;`);
-    
-    const values = searchResult[0].values;
-    resultsContainer.innerHTML = '';
-    let html = '<div class="results-list">';
-
-    values.forEach(team => {
-        const teamID = team[0];
-        const teamName = team[1];
-
-        html += `
-            <div class="result-item" onclick='selectTeam(${JSON.stringify(team)})'>
-                <div style="width: 40px;"></div>
-                <div class="team-info">
-                    <div class="team-name">${teamName}</div>
-                </div>
-            </div>
-        `;
-    });
-
-    html += '</div>';
-    resultsContainer.innerHTML = html;
-}
-
-function selectTeam(team) {
-    homeTeamID = team[0];
-    checkMatchDay();
-    closeSearch();
+    return null;
 }
 
 // Check on page load
