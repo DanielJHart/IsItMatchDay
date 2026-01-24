@@ -4,33 +4,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Is It Match Day?</title>
-    <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            display: flex;
-            padding: 20px;
-            align-items: center;
-            justify-content: center;
-            background: rgb(43, 43, 43);
-        }
-
-        h1 {
-            font-size: 10rem;
-            color: white;
-            text-align: center;
-        }
-        h2 {
-            font-size: 2rem;
-            color: white;
-            text-align: center;
-        }
-
-        .sunderland {
-            color: #eb172b;
-        }
-    </style>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <div class="search-wrapper">
+        <input 
+            type="text" 
+            id="searchInput" 
+            class="search-box" 
+            placeholder="Search team..."
+            autocomplete="off">
+        <span class="search-icon">🔍</span>
+    </div>
+    <div id="resultsContainer"></div>
+    <div id="selectedTeam"></div>
+
     <div class="container">
         <h1 id="result"></h1>
         <h2 id="match"></h2>

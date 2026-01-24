@@ -1,0 +1,24 @@
+{
+  "name": "isitmatchday",
+  "version": "1.0.0",
+  "description": "In Newcastle, when it is match day the traffic is jammed and the streets are packed. I try to avoid this when I can and since I don't follow football, I have made this website to quickly show me if it is match day or not before I journey into the toon.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DanielJHart/IsItMatchDay.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/DanielJHart/IsItMatchDay/issues"
+  },
+  "homepage": "https://github.com/DanielJHart/IsItMatchDay#readme",
+  "dependencies": {
+    "express": "^5.2.1"
+  }
+}
