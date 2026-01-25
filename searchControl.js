@@ -115,6 +115,6 @@ function searchTeams(query) {
 
 function selectTeam(team) {
     homeTeamID = team[0];
-    checkMatchDay();
+    checkMatchDay(team[0]);
     closeSearch();
 }

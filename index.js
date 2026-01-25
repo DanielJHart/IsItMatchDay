@@ -15,12 +15,12 @@ if (urlParams.has('id')) {
 
 const API_BASE = 'https://www.thesportsdb.com/api/v1/json/3';
 
-async function checkMatchDay() 
+async function checkMatchDay(teamID)
 {
     const resultDiv = document.getElementById('result');
     try {
         // Get next event for Newcastle
-        const response = await fetch(`https://www.thesportsdb.com/api/v1/json/123/eventsnext.php?id=${homeTeamID}`);
+        const response = await fetch(`https://www.thesportsdb.com/api/v1/json/123/eventsnext.php?id=${teamID}`);
         
         if (!response.ok) {
             throw new Error('Failed to fetch match data');
@@ -28,8 +28,13 @@ async function checkMatchDay()
 
         const data = await response.json();
 
-        document.cookie = "LastTeamID=" + homeTeamID;
-        
+        document.cookie = "LastTeamID=" + teamID;
+
+        if (data.events == null) {
+            displayNoEvents();
+            return;
+        }
+
         if (!data.events || data.events.length === 0) {
             displayNotMatchDay();
             return;
@@ -43,9 +48,9 @@ async function checkMatchDay()
         const todayMatch = data.events.find(event => event.dateEvent === todayStr);
 
         if (todayMatch) {
-            displayMatchDay(todayMatch, homeTeamID);
+            displayMatchDay(todayMatch, teamID);
         } else {
-            displayNotMatchDay(data.events[0], homeTeamID);
+            displayNotMatchDay(data.events[0], teamID);
         }
 
     } 
@@ -54,35 +59,42 @@ async function checkMatchDay()
     }
 }
 
-function displayMatchDay(match, homeTeamID) {
+function displayMatchDay(match, teamID) {
     const resultDiv = document.getElementById('result');
     const matchDiv = document.getElementById('match');
 
     resultDiv.innerHTML='YES';
-    matchDiv.innerHTML= getMatchInfoString(match, homeTeamID);
+    matchDiv.innerHTML= getMatchInfoString(match, teamID);
 }
 
-function displayNotMatchDay(nextMatch, homeTeamID) {
+function displayNotMatchDay(nextMatch, teamID) {
     const resultDiv = document.getElementById('result');
     const matchDiv = document.getElementById('match');
 
     const date = new Date(nextMatch.dateEvent);
     const options = {weekday: "long", year: "numeric", month: "long", day: "numeric"};
-    const matchInfo = getMatchInfoString(nextMatch, homeTeamID);
+    const matchInfo = getMatchInfoString(nextMatch, teamID);
 
-    resultDiv.innerHTML = 'NO'
+    resultDiv.innerHTML = 'NO';
     matchDiv.innerHTML = `Next Match: ${date.toLocaleDateString('en-GB', options)}<br>${matchInfo}`;
 }
 
-function getMatchInfoString(match, homeTeamID) {
+function displayNoEvents() {
+    const resultDiv = document.getElementById('result');
+    const matchDiv = document.getElementById('match');
+    resultDiv.innerHTML = 'NO';
+    matchDiv.innerHTML = `Next Match: TBC`;
+}
+
+function getMatchInfoString(match, teamID) {
     // Determine if home or away
-    const isHome = match.idHomeTeam === homeTeamID;
+    const isHome = match.idHomeTeam == teamID;
     const homeTeamStr = isHome? match.strHomeTeam : match.strAwayTeam;
     var opponentStr = isHome ? match.strAwayTeam : match.strHomeTeam;
     const venueStr = isHome ? 'At Home' : 'Away';
     
     if (opponentStr.match(/Sunderland/gi) 
-        && homeTeamID === NEWCASTLE_TEAM_ID) {
+        && teamID === NEWCASTLE_TEAM_ID) {
         opponentStr = "<span class=\"sunderland\">" + opponentStr + "</span>";
     }
     
@@ -111,4 +123,4 @@ function getCookie(name) {
 }
 
 // Check on page load
-checkMatchDay();
+checkMatchDay(homeTeamID);
