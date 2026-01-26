@@ -18,6 +18,8 @@ const API_BASE = 'https://www.thesportsdb.com/api/v1/json/3';
 async function checkMatchDay(teamID)
 {
     const resultDiv = document.getElementById('result');
+    const matchDiv = document.getElementById('match');
+
     try {
         // Get next event for Newcastle
         const response = await fetch(`https://www.thesportsdb.com/api/v1/json/123/eventsnext.php?id=${teamID}`);
@@ -35,27 +37,32 @@ async function checkMatchDay(teamID)
             return;
         }
 
-        if (!data.events || data.events.length === 0) {
-            displayNotMatchDay();
-            return;
-        }
-
         // Get today's date in YYYY-MM-DD format
         const today = new Date();
         const todayStr = today.toISOString().split('T')[0];
-
+        
         // Check if any match is today
         const todayMatch = data.events.find(event => event.dateEvent === todayStr);
+        const eventDate = new Date(Date.parse(todayMatch.dateEvent));
 
         if (todayMatch) {
             displayMatchDay(todayMatch, teamID);
         } else {
+
+            // If someone has not reloaded the page since yesterday, and the match was yesterday, reload
+            if (eventDate < today) {
+                console.log("Hit, reloading");
+                window.location.reload();
+                return;
+            }
+
             displayNotMatchDay(data.events[0], teamID);
         }
 
     } 
     catch (error) {
-        resultDiv.innerHTML = `<strong>Error:</strong> ${error.message}<br>Unable to check match status. Please try again.`;
+        resultDiv.innerHTML = "Whoops.";
+        matchDiv.innerHTML = "Something went wrong.";
     }
 }
 
