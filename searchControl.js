@@ -1,3 +1,6 @@
+import { createClient } from "@libsql/client";
+import { NextResponse } from 'next/server';
+
 const searchIcon = document.getElementById('searchIcon');
 const searchPanel = document.getElementById('searchPanel');
 const overlay = document.getElementById('overlay');
@@ -83,10 +86,32 @@ searchInput.addEventListener('input', function() {
 
         // Debounce - wait 300ms after user stops typing
         searchTimeout = setTimeout(() => {
-            searchTeams(query);
+            searchTeamsAsync(query);
         }, 300);
     }
 });
+
+const TURSO_AUTH_TOKEN = "eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE3Njg1OTAwNTMsImlkIjoiYjg4M2E3MmQtYzMxZS00OWM3LTg5OWMtOWYxM2MzZWY0ZjUwIiwicmlkIjoiYmQ5ZjI2M2EtNmZiYy00MTU2LThjYzItYjM0Yjc2ZWQzYzFiIn0.gs7mTi9T4795nN-jLvD8g1oUIPKUwqrkkQ9--no2TFnI_fGdLPdlVCUUBqopRMBR-CG2ZcboiXQbT8Ipm2lKAw";
+const TURSO_DATABASE_URL = "libsql://is-it-match-day-vercel-icfg-bth9fa9tnqbrb7rd1bzriivq.aws-eu-west-1.turso.io";
+
+const client = createClient({
+  url: TURSO_DATABASE_URL,
+  authToken: TURSO_AUTH_TOKEN,
+});
+
+/*
+export const POST = async () => {
+  // Fetch data from SQLite
+  const result = await client.execute(`SELECT * FROM FootballTeams WHERE TeamName LIKE ` + `'%${query.replace(/'/g, "''")}%' LIMIT 10;`);
+};*/
+
+async function searchTeamsAsync(query) {
+    console.log('Searching for:', query);
+    const result = await client.execute(`SELECT * FROM FootballTeams WHERE TeamName LIKE ` + `'%${query.replace(/'/g, "''")}%' LIMIT 10;`);
+
+    console.log(result);
+}
+
 
 function searchTeams(query) {
     const searchResult = db.exec(`SELECT * FROM FootballTeams WHERE TeamName LIKE ` + `'%${query.replace(/'/g, "''")}%' LIMIT 10;`);
