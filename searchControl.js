@@ -42,27 +42,6 @@ document.addEventListener('keydown', (e) => {
     }
 });
 
-let db;
-
-async function loadDatabase() {
-    try {
-        const SQL = await initSqlJs({
-            locateFile: file => `https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.8.0/${file}`
-        });
-
-        const response = await fetch('IsItMatchDayDB.db');
-        const buffer = await response.arrayBuffer();
-        db = new SQL.Database(new Uint8Array(buffer));
-        
-        console.log('✅ Database loaded!');
-        
-    } catch (error) {
-        console.error('❌ Error loading database:', error);
-    }
-}
-
-loadDatabase();
-
 const searchInput = document.getElementById('searchInput');
 const resultsContainer = document.getElementById('searchResults');
 
