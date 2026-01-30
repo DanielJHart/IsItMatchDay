@@ -1,5 +1,5 @@
 import { createClient } from "@libsql/client";
-import { NextResponse } from 'next/server';
+//import { NextResponse } from 'next/server';
 
 const searchIcon = document.getElementById('searchIcon');
 const searchPanel = document.getElementById('searchPanel');
@@ -91,55 +91,56 @@ searchInput.addEventListener('input', function() {
     }
 });
 
-const TURSO_AUTH_TOKEN = "eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE3Njg1OTAwNTMsImlkIjoiYjg4M2E3MmQtYzMxZS00OWM3LTg5OWMtOWYxM2MzZWY0ZjUwIiwicmlkIjoiYmQ5ZjI2M2EtNmZiYy00MTU2LThjYzItYjM0Yjc2ZWQzYzFiIn0.gs7mTi9T4795nN-jLvD8g1oUIPKUwqrkkQ9--no2TFnI_fGdLPdlVCUUBqopRMBR-CG2ZcboiXQbT8Ipm2lKAw";
-const TURSO_DATABASE_URL = "libsql://is-it-match-day-vercel-icfg-bth9fa9tnqbrb7rd1bzriivq.aws-eu-west-1.turso.io";
-
 const client = createClient({
-  url: TURSO_DATABASE_URL,
-  authToken: TURSO_AUTH_TOKEN,
+  url: process.env.TURSO_DATABASE_URL,
+  authToken: process.env.TURSO_AUTH_TOKEN,
 });
-
-/*
-export const POST = async () => {
-  // Fetch data from SQLite
-  const result = await client.execute(`SELECT * FROM FootballTeams WHERE TeamName LIKE ` + `'%${query.replace(/'/g, "''")}%' LIMIT 10;`);
-};*/
 
 async function searchTeamsAsync(query) {
     console.log('Searching for:', query);
     const result = await client.execute(`SELECT * FROM FootballTeams WHERE TeamName LIKE ` + `'%${query.replace(/'/g, "''")}%' LIMIT 10;`);
 
+    const values = result.rows;
+    resultsContainer.innerHTML = '';
+
+    let resultsDiv = document.createElement('div');
+    resultsDiv.classList.add('results-list');
+
+    values.forEach(team => {
+        const resultItem = setupSearchResultItem(team.TeamName, team.TeamID);
+        resultsDiv.appendChild(resultItem);
+    });
+
+    resultsContainer.appendChild(resultsDiv);
+
     console.log(result);
 }
 
+function setupSearchResultItem(teamName, teamID){
+    var itemDiv = document.createElement('div');
+    itemDiv.classList.add('result-item');
+    itemDiv.onclick = function() { selectTeam(teamID); };
 
-function searchTeams(query) {
-    const searchResult = db.exec(`SELECT * FROM FootballTeams WHERE TeamName LIKE ` + `'%${query.replace(/'/g, "''")}%' LIMIT 10;`);
-    
-    const values = searchResult[0].values;
-    resultsContainer.innerHTML = '';
-    let html = '<div class="results-list">';
+    var widthDiv = document.createElement('div');
+    widthDiv.style.width = '40px';
 
-    values.forEach(team => {
-        const teamID = team[0];
-        const teamName = team[1];
+    var infoDiv = document.createElement('div');
+    infoDiv.classList.add('team-info');
 
-        html += `
-            <div class="result-item" onclick='selectTeam(${JSON.stringify(team)})'>
-                <div style="width: 40px;"></div>
-                <div class="team-info">
-                    <div class="team-name">${teamName}</div>
-                </div>
-            </div>
-        `;
-    });
+    var nameDiv = document.createElement('div');
+    nameDiv.classList.add('team-name');
+    nameDiv.innerHTML = teamName;
 
-    html += '</div>';
-    resultsContainer.innerHTML = html;
+    itemDiv.appendChild(widthDiv);
+    itemDiv.appendChild(infoDiv);
+    infoDiv.appendChild(nameDiv);
+
+    return itemDiv;
 }
 
-function selectTeam(team) {
-    homeTeamID = team[0];
-    checkMatchDay(team[0]);
+function selectTeam(teamID) {
+    console.log('Selected team ID:', teamID);
+    homeTeamID = teamID;
+    checkMatchDay(teamID);
     closeSearch();
 }
